@@ -1,34 +1,28 @@
-import { User, UserModel } from "../models/user.model";
-
+import { prisma } from "../config/prisma";
 
 export class UserService {
 
-    static getUsers(): User[] {
-        return UserModel.findAll();
+    static async getUsers() {
+        return await prisma.user.findMany();
     }
 
-    static getUserById(id:number): User {
-        const user = UserModel.findById(id);
-        if(!user) throw new Error("User not found");
-        return user;
+    static async getUserById(id:number) {
+        return await prisma.user.findUnique({ where: { id } });
     }
 
-    static createUser(data: User): User {
-        if (!data.name) throw new Error("Name is required");
-        if (!data.email) throw new Error("Email is required");
+    static async createUser(data: any) {
+        return await prisma.user.create({ data });
+    }
     
-        return UserModel.create(data);
+    static async updateUser(id: number, data: any) {
+        return await prisma.user.update({
+            where: { id },
+            data,
+        });
     }
-
-  static updateUser(id: number, data: Partial<User>): User {
-        const updated = UserModel.update(id, data);
-        if (!updated) throw new Error("User not found");
-        return updated;
-  }
-
-    static deleteUser(id: number): void {
-        const deleted = UserModel.delete(id);
-        if (!deleted) throw new Error("User not found");
+    
+    static async deleteUser(id: number) {
+        return await prisma.user.delete({ where: { id } });
     }
-
+    
 }

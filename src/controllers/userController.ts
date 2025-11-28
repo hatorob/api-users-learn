@@ -4,9 +4,9 @@ import { UserService } from "../services/user.service";
 
 export class UserController {
 
-    static getUsers = (req: Request, res: Response ) => {
+    static getUsers = async (req: Request, res: Response ) => {
         try {
-            const users = UserService.getUsers();
+            const users = await UserService.getUsers();
             res.status(200).json({
                 response: true,
                 data: users
@@ -18,11 +18,11 @@ export class UserController {
         }
     }
 
-    static getUserById =(req: Request, res: Response ) => {
+    static getUserById = async (req: Request, res: Response ) => {
         try {
             const { id } = req.params;
             if(!id) throw new Error(`user id is required`);
-            const user = UserService.getUserById(Number(id));
+            const user = await UserService.getUserById(Number(id));
             res.status(200).json({
                 response: true,
                 data: user
@@ -34,9 +34,9 @@ export class UserController {
         }
     }
 
-    static createdUser = (req: Request, res: Response ) => {
+    static createdUser = async (req: Request, res: Response ) => {
         try {
-            const userCreated = UserService.createUser(req.body);
+            const userCreated = await UserService.createUser(req.body);
             res.status(200).json({
                 response: true,
                 data: userCreated
@@ -48,11 +48,11 @@ export class UserController {
         }
     }
 
-    static updateUser = (req: Request, res: Response ) => {
+    static updateUser = async (req: Request, res: Response ) => {
         try {
             const { id } = req.params;
             if(!id) throw new Error(`user id is required`);
-            const userUpdated = UserService.updateUser(Number(id),req.body);
+            const userUpdated = await UserService.updateUser(Number(id),req.body);
             res.status(200).json({
                 response: true,
                 data: userUpdated
@@ -64,11 +64,15 @@ export class UserController {
         }
     }
 
-    static deleteUser = (req: Request, res: Response ) => {
+    static deleteUser = async (req: Request, res: Response ) => {
         try {
             const { id } = req.params;
             if(!id) throw new Error(`user id is required`);
-            res.json({ message: "deleteUser" });
+            const userDeleted = await UserService.deleteUser(Number(id));
+            res.status(200).json({
+                response: true,
+                data: userDeleted
+            })
         } catch (error: any) {
             res.status(400).json({
                 error: error.message
