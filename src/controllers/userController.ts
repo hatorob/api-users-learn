@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
+import { UserService } from "../services/user.service";
 
 
 export class UserController {
 
     static getUsers = (req: Request, res: Response ) => {
         try {
-            res.json({ message: "getUsers" });
+            const users = UserService.getUsers();
+            res.status(200).json({
+                response: true,
+                data: users
+            })
         } catch (error: any) {
             res.status(400).json({
                 error: error.message
@@ -17,7 +22,11 @@ export class UserController {
         try {
             const { id } = req.params;
             if(!id) throw new Error(`user id is required`);
-            res.json({ message: "getUserById" });
+            const user = UserService.getUserById(Number(id));
+            res.status(200).json({
+                response: true,
+                data: user
+            })
         } catch (error: any) {
             res.status(400).json({
                 error: error.message
@@ -27,7 +36,11 @@ export class UserController {
 
     static createdUser = (req: Request, res: Response ) => {
         try {
-            res.json({ message: "createdUser yeah" });
+            const userCreated = UserService.createUser(req.body);
+            res.status(200).json({
+                response: true,
+                data: userCreated
+            })
         } catch (error: any) {
             res.status(400).json({
                 error: error.message
@@ -39,7 +52,11 @@ export class UserController {
         try {
             const { id } = req.params;
             if(!id) throw new Error(`user id is required`);
-            res.json({ message: "updateUser" });
+            const userUpdated = UserService.updateUser(Number(id),req.body);
+            res.status(200).json({
+                response: true,
+                data: userUpdated
+            })
         } catch (error: any) {
             res.status(400).json({
                 error: error.message
