@@ -14,7 +14,6 @@ export class UserController {
 
     static getUserById = async (req: Request, res: Response, next: NextFunction ) => {
         const { id } = req.params;
-        if(!id) throw ErrorFactory.create("BAD_REQUEST", "User id is require");
         const user = await UserService.getUserById(Number(id));
         if(!user) throw ErrorFactory.create("NOT_FOUND", "User not found");
         return ResponseApi.ok(res,user,"Succes find user");
@@ -27,14 +26,12 @@ export class UserController {
 
     static updateUser = async (req: Request, res: Response, next: NextFunction ) => {
         const { id } = req.params;
-        if(!id) throw ErrorFactory.create("BAD_REQUEST","User id is require");
         const userUpdated = await UserService.updateUser(Number(id),req.body);
         return ResponseApi.ok(res,userUpdated,"User updated");
     }
 
     static deleteUser = async (req: Request, res: Response, next: NextFunction ) => {
         const { id } = req.params;
-        if(!id) throw ErrorFactory.create("BAD_REQUEST","User id is required");
         const userDeleted = await UserService.deleteUser(Number(id));
         return ResponseApi.created(res, userDeleted, "Succes Deleted User");
     }

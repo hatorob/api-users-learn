@@ -2,17 +2,19 @@ import { NextFunction, Request, Response } from "express";
 import { ZodTypeAny  } from "zod";
 import { ErrorFactory } from "../utils/error/ErrorFactory";
 
-export const validate = (schema: ZodTypeAny ) => 
+export const validate = (schema: ZodTypeAny, type: "body" | "params" | "query" = "body" ) => 
     (req: Request, res: Response, next: NextFunction) => {
-        console.log(req.body);
-        const result = schema.safeParse(req.body);
-        console.log(result)
+
+        const data = req[type];
+        const result = schema.safeParse(data);
+
         if(!result.success) {
-            const message = result.error.issues[0].message;
-            throw ErrorFactory.create("BAD_REQUEST", message);
+            const issue = result.error.issues[0];
+            throw ErrorFactory.create("BAD_REQUEST", issue.message);
         }
 
-        req.body = result.data;
+        req[type] = result.data;
+
         next();
 
 }
