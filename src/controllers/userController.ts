@@ -1,83 +1,42 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/user.service";
+import { ErrorFactory } from "../utils/error/ErrorFactory";
+import { ResponseApi } from "../utils/response/responseFactory";
 
 
 export class UserController {
 
-    static getUsers = async (req: Request, res: Response ) => {
-        try {
-            const users = await UserService.getUsers();
-            res.status(200).json({
-                response: true,
-                data: users
-            })
-        } catch (error: any) {
-            res.status(400).json({
-                error: error.message
-            })
-        }
+    static getUsers = async (req: Request, res: Response, next: NextFunction ) => {
+        const users = await UserService.getUsers();
+        if(!users) throw ErrorFactory.create("NOT_FOUND","Not found the users");
+        return ResponseApi.ok(res,users,"Success find users");
     }
 
-    static getUserById = async (req: Request, res: Response ) => {
-        try {
-            const { id } = req.params;
-            if(!id) throw new Error(`user id is required`);
-            const user = await UserService.getUserById(Number(id));
-            res.status(200).json({
-                response: true,
-                data: user
-            })
-        } catch (error: any) {
-            res.status(400).json({
-                error: error.message
-            })
-        }
+    static getUserById = async (req: Request, res: Response, next: NextFunction ) => {
+        const { id } = req.params;
+        if(!id) throw ErrorFactory.create("BAD_REQUEST", "User id is require");
+        const user = await UserService.getUserById(Number(id));
+        if(!user) throw ErrorFactory.create("NOT_FOUND", "User not found");
+        return ResponseApi.ok(res,user,"Succes find user");
     }
 
-    static createdUser = async (req: Request, res: Response ) => {
-        try {
-            const userCreated = await UserService.createUser(req.body);
-            res.status(200).json({
-                response: true,
-                data: userCreated
-            })
-        } catch (error: any) {
-            res.status(400).json({
-                error: error.message
-            })
-        }
+    static createdUser = async (req: Request, res: Response, next: NextFunction ) => {
+        const userCreated = await UserService.createUser(req.body);
+        return ResponseApi.created(res,userCreated,"User created");
     }
 
-    static updateUser = async (req: Request, res: Response ) => {
-        try {
-            const { id } = req.params;
-            if(!id) throw new Error(`user id is required`);
-            const userUpdated = await UserService.updateUser(Number(id),req.body);
-            res.status(200).json({
-                response: true,
-                data: userUpdated
-            })
-        } catch (error: any) {
-            res.status(400).json({
-                error: error.message
-            })
-        }
+    static updateUser = async (req: Request, res: Response, next: NextFunction ) => {
+        const { id } = req.params;
+        if(!id) throw ErrorFactory.create("BAD_REQUEST","User id is require");
+        const userUpdated = await UserService.updateUser(Number(id),req.body);
+        return ResponseApi.ok(res,userUpdated,"User updated");
     }
 
-    static deleteUser = async (req: Request, res: Response ) => {
-        try {
-            const { id } = req.params;
-            if(!id) throw new Error(`user id is required`);
-            const userDeleted = await UserService.deleteUser(Number(id));
-            res.status(200).json({
-                response: true,
-                data: userDeleted
-            })
-        } catch (error: any) {
-            res.status(400).json({
-                error: error.message
-            })
-        }
+    static deleteUser = async (req: Request, res: Response, next: NextFunction ) => {
+        const { id } = req.params;
+        if(!id) throw ErrorFactory.create("BAD_REQUEST","User id is required");
+        const userDeleted = await UserService.deleteUser(Number(id));
+        return ResponseApi.created(res, userDeleted, "Succes Deleted User");
     }
 
 }
