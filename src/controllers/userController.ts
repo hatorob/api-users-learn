@@ -6,8 +6,9 @@ import { ResponseApi } from "../utils/response/responseFactory";
 
 export class UserController {
 
-    static getUsers = async (req: Request, res: Response, next: NextFunction ) => {
-        const users = await UserService.getUsers();
+    static getUsersPaginated = async (req: Request, res: Response, next: NextFunction ) => {
+        const filters = req.merged;
+        const users = await UserService.getUsersPaginated(filters);
         if(!users) throw ErrorFactory.create("NOT_FOUND","Not found the users");
         return ResponseApi.ok(res,users,"Success find users");
     }
